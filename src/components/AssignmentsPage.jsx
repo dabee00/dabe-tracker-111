@@ -151,7 +151,6 @@ export default function AssignmentsPage({ assignments, setAssignments, addAssign
               <ClipboardList className="w-7 h-7 text-blue-600" />
               Assignments & Tasks
             </h1>
-        <p className="text-slate-500 text-sm mt-0.5">Manage your academic tasks professionally</p>
 
           </div>
           <button
