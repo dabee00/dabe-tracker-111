@@ -62,11 +62,6 @@ export default function PITPage({ pits, setPits, addPIT, updatePIT, deletePIT })
       team: teamArr,
       color: subjectColors[form.subject] || '#8b5cf6',
       progress: Number(form.progress),
-      criteria: [
-        { label: 'Content & Research', score: 35 },
-        { label: 'Creativity', score: 30 },
-        { label: 'Presentation', score: 35 },
-      ],
       createdAt: new Date(),
     };
 
@@ -269,41 +264,14 @@ export default function PITPage({ pits, setPits, addPIT, updatePIT, deletePIT })
                       <span className="text-xs text-slate-500 ml-1">{pit.team.length} member{pit.team.length !== 1 ? 's' : ''}</span>
                     </div>
                     <button
-                      onClick={() => setExpandedId(isExpanded ? null : pit.id)}
+                      onClick={() => handleDelete(pit.id)}
                       className="text-xs text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
                     >
-                      {isExpanded ? 'Less' : 'Criteria'}
+                        Done
                     </button>
                   </div>
 
-                  {/* Criteria */}
-                  {isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-slate-100">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Target className="w-4 h-4 text-purple-500" />
-                        <p className="text-xs font-bold text-slate-700">Grading Criteria</p>
-                      </div>
-                      <div className="space-y-2">
-                        {pit.criteria.map((c, i) => (
-                          <div key={i} className="flex items-center justify-between bg-slate-50 rounded-lg p-2">
-                            <span className="text-xs text-slate-600">{c.label}</span>
-                            <span
-                              className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
-                              style={{ backgroundColor: pit.color }}
-                            >
-                              {c.score} pts
-                            </span>
-                          </div>
-                        ))}
-                        <div className="flex items-center justify-between bg-slate-100 rounded-lg p-2 mt-1">
-                          <span className="text-xs font-bold text-slate-700">Total</span>
-                          <span className="text-xs font-bold text-slate-700">
-                            {pit.criteria.reduce((s, c) => s + c.score, 0)} pts
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+
                 </div>
               </div>
             );
