@@ -35,7 +35,9 @@ const priorityConfig = {
 };
 
 function getDueDateInfo(dateStr) {
+  if (!dateStr) return { label: 'No Due Date', color: 'text-slate-400', urgent: false };
   const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return { label: 'No Due Date', color: 'text-slate-400', urgent: false };
   const days = differenceInDays(date, new Date());
   if (days < 0) return { label: 'Overdue', color: 'text-red-600 font-bold', urgent: true };
   if (isToday(date)) return { label: 'Due Today', color: 'text-red-500 font-bold', urgent: true };
@@ -69,7 +71,11 @@ export default function AssignmentsPage({ assignments, setAssignments, addAssign
       const matchSubject = filterSubject === 'all' || a.subject === filterSubject;
       return matchSearch && matchStatus && matchSubject;
     })
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+    .sort((a, b) => {
+      const da = a.dueDate && !Number.isNaN(new Date(a.dueDate).getTime()) ? new Date(a.dueDate) : new Date(8640000000000000);
+      const db = b.dueDate && !Number.isNaN(new Date(b.dueDate).getTime()) ? new Date(b.dueDate) : new Date(8640000000000000);
+      return da - db;
+    });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -308,7 +314,7 @@ export default function AssignmentsPage({ assignments, setAssignments, addAssign
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 block mb-1">Title (optional)</label>
+                <label className="text-sm font-medium text-slate-700 block mb-1">Title</label>
                 <input
                   type="text"
                   value={form.title}
@@ -333,10 +339,9 @@ export default function AssignmentsPage({ assignments, setAssignments, addAssign
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-700 block mb-1">Due Date *</label>
+                  <label className="text-sm font-medium text-slate-700 block mb-1">Due Date</label>
                   <input
                     type="date"
-                    required
                     value={form.dueDate}
                     onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"

@@ -31,7 +31,9 @@ const quizTypeConfig = {
 };
 
 function getDueDateLabel(dateStr) {
+  if (!dateStr) return { label: 'No Due Date', color: 'text-slate-400' };
   const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return { label: 'No Due Date', color: 'text-slate-400' };
   if (isToday(date)) return { label: 'Today', color: 'text-red-600 font-bold' };
   if (isTomorrow(date)) return { label: 'Tomorrow', color: 'text-orange-500 font-semibold' };
   const days = differenceInDays(date, new Date());
@@ -50,7 +52,11 @@ export default function Dashboard({ assignments, pits, quizzes, setActivePage })
     .slice(0, 4);
   const activePits = pits.filter((p) => p.status !== 'completed').slice(0, 3);
   const recentAssignments = pending
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .sort((a, b) => {
+      const da = a.dueDate && !Number.isNaN(new Date(a.dueDate).getTime()) ? new Date(a.dueDate) : new Date(8640000000000000);
+      const db = b.dueDate && !Number.isNaN(new Date(b.dueDate).getTime()) ? new Date(b.dueDate) : new Date(8640000000000000);
+      return da - db;
+    })
     .slice(0, 5);
 
   const completionRate = assignments.length

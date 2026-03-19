@@ -165,7 +165,9 @@ export default function PITPage({ pits, setPits, addPIT, updatePIT, deletePIT })
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {pits.map((pit) => {
             const status = statusConfig[pit.status];
-            const daysLeft = differenceInDays(new Date(pit.dueDate), new Date());
+            const hasDueDate = pit.dueDate && !Number.isNaN(new Date(pit.dueDate).getTime());
+            const dueDateObj = hasDueDate ? new Date(pit.dueDate) : null;
+            const daysLeft = hasDueDate ? differenceInDays(dueDateObj, new Date()) : null;
             const isExpanded = expandedId === pit.id;
 
             return (
@@ -211,10 +213,16 @@ export default function PITPage({ pits, setPits, addPIT, updatePIT, deletePIT })
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${status.bg} ${status.text}`}>
                       {status.label}
                     </span>
-                    <span className={`text-xs font-medium ${daysLeft < 0 ? 'text-red-600' : daysLeft <= 3 ? 'text-orange-500' : 'text-slate-500'}`}>
-                      {daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Due today' : `${daysLeft} days left`}
-                    </span>
-                    <span className="text-xs text-slate-400">· Due {format(new Date(pit.dueDate), 'MMM d')}</span>
+                    {hasDueDate ? (
+                      <>
+                        <span className={`text-xs font-medium ${daysLeft < 0 ? 'text-red-600' : daysLeft <= 3 ? 'text-orange-500' : 'text-slate-500'}`}>
+                          {daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Due today' : `${daysLeft} days left`}
+                        </span>
+                        <span className="text-xs text-slate-400">· Due {format(dueDateObj, 'MMM d')}</span>
+                      </>
+                    ) : (
+                      <span className="text-xs text-slate-400">No due date</span>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -304,7 +312,7 @@ export default function PITPage({ pits, setPits, addPIT, updatePIT, deletePIT })
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 block mb-1">Title (optional)</label>
+                <label className="text-sm font-medium text-slate-700 block mb-1">Title</label>
                 <input
                   type="text"
                   value={form.title}
@@ -330,10 +338,9 @@ export default function PITPage({ pits, setPits, addPIT, updatePIT, deletePIT })
         </div>
 
                 <div>
-                  <label className="text-sm font-medium text-slate-700 block mb-1">Due Date *</label>
+                  <label className="text-sm font-medium text-slate-700 block mb-1">Due Date</label>
                   <input
                     type="date"
-                    required
                     value={form.dueDate}
                     onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
